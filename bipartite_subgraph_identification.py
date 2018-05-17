@@ -29,7 +29,7 @@ Created on Thu May 17 15:35:41 2018
     
     INPUT :  A simple, connected, and undirected graph G
     
-    OUTPUT: A bipartiiton of vertices with the ratio between the edges in the bipartition
+    OUTPUT: A bipartition of vertices with the ratio between the edges in the bipartition
             to the total number of edges in the graph G
     
 """
