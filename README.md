@@ -11,4 +11,4 @@
       
    * Estrada & Gómez-Gardeñes  edge bipartivity [Estrada, E. and Gómez-Gardeñes, J., Physica D: Nonlinear Phenomena, 323, pp.57-63, 2016]
    
-   * Two new measured based on the adjancency and normalized laplacian matrix described in Paul, D, Stevanovic, D (2018) (in preparation) 
+   * Two new measures based on the adjancency and the normalized laplacian matrix [Paul, D, Stevanovic, D (2018) (in preparation)] 
