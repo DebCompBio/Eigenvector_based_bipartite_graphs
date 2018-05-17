@@ -1,6 +1,6 @@
 # Eigenvector-based identification of bipartite subgraphs
 
-* The script BIPARTITE_SUBGRAPH_IDENTIFICATION returns the relative size of bipartition for a simple, connected, and undirected graph using: 
+* The script BIPARTITE_SUBGRAPH_IDENTIFICATION returns the relative size of bipartition (the ratio between the number of edges in the bipartition to the total number of edges in the orginal graph) for a simple, connected, and undirected graph using: 
    
    * A combinatorial method following Erdös bound
    
