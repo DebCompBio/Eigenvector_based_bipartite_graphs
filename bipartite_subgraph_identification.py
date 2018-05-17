@@ -6,14 +6,6 @@ Created on Thu May 17 15:35:41 2018
 @author: debdaspaul
 """
 
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sat May  5 17:29:24 2018
-
-@author: Paul, Debdas 
-
-"""
 """ Description 
     
     The script COMBINATORIAL_EIGENVECTOR_APPROACH contains a list of routines 
