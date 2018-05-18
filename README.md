@@ -23,7 +23,7 @@ not contain a cycle of odd length as a subgraph.
    
    * Two new measures based on the adjancency and the normalized laplacian matrix [Paul, D. and Stevanovic, D., (2018) (in preparation)] 
 
-## Required package(s)
+## Dependencies
 
 * networkx (https://networkx.github.io/documentation/networkx-1.10/index.html)
 * numpy
