@@ -34,3 +34,4 @@ not contain a cycle of odd length as a subgraph.
 * networkx (https://networkx.github.io/documentation/networkx-1.10/index.html)
 * numpy
 * random
+* matplotlib (for plotting)
