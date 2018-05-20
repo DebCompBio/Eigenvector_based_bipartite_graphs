@@ -6,6 +6,14 @@ Created on Thu May 17 15:35:41 2018
 @author: debdaspaul
 """
 
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Sat May  5 17:29:24 2018
+
+@author: Paul, Debdas 
+
+"""
 """ Description 
     
     The script COMBINATORIAL_EIGENVECTOR_APPROACH contains a list of routines 
@@ -29,7 +37,7 @@ Created on Thu May 17 15:35:41 2018
     
     INPUT :  A simple, connected, and undirected graph G
     
-    OUTPUT: A bipartition of vertices with the ratio between the edges in the bipartition
+    OUTPUT: A bipartiiton of vertices with the ratio between the edges in the bipartition
             to the total number of edges in the graph G
     
 """
@@ -87,7 +95,9 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-
+import sys
+import argparse
+import os
 
 def make_partition(lst,n):
     """ Make random partition of vertices """
@@ -207,20 +217,33 @@ def edwards_ratio(G):
 
 def generate_er(n,p):
     
-    return nx.erdos_renyi_graph(n, p, seed=None, directed=False);
+    gr=nx.erdos_renyi_graph(n, p, seed=None, directed=False);
+    print ("Graph type: Erdös-Renyi")
+    print ("\n number of nodes:", nx.number_of_nodes(gr))
+    print ("\n number of edges:", nx.number_of_edges(gr))
+    return gr
 
 def generate_ba(n,m):
-    
+      
     return  nx.barabasi_albert_graph(n, m, seed=None);
     
 def generate_rg(n,radius):
     
-    return nx.random_geometric_graph(n, radius, dim=2, pos=None);
+    gr=nx.random_geometric_graph(n, radius, dim=2, pos=None);
+    print ("Graph type: Random-Geometric")
+    print ("\n number of nodes:", nx.number_of_nodes(gr))
+    print ("\n number of edges:", nx.number_of_edges(gr))
+    
+    return gr
 
 def generate_ws(n,k,p):
     
      return nx.connected_watts_strogatz_graph(n, k, p, tries=100, seed=None)
  
+def generate_gnm(n,m):
+         
+    return nx.gnm_random_graph(n,m);
+
     
 def check_bipartite(G):
     return nx.is_bipartite(G)    
@@ -451,7 +474,7 @@ def routine_obtain_bipartite_subgraphs(instances_of_graphs,param):
             """Call the function erdos_method """
             if param==0:
                 tempratio_list=[];
-                number_of_random_permutation=1;
+                number_of_random_permutation=100;
                 for perm in range(number_of_random_permutation):
                      [ratio,Finalnode_partition] = erdos_method(G,param) #f2
                      tempratio_list.append(ratio)
@@ -473,6 +496,43 @@ def routine_obtain_bipartite_subgraphs(instances_of_graphs,param):
              
              print("\nNot connected...")
     return ratio_list 
+
+def call_methods(instances_of_graphs):
+    ratio_erdos=routine_obtain_bipartite_subgraphs(instances_of_graphs,0)
+    ratioA=routine_obtain_bipartite_subgraphs(instances_of_graphs,1)
+    ratioQ=routine_obtain_bipartite_subgraphs(instances_of_graphs,2)
+    ratioL=routine_obtain_bipartite_subgraphs(instances_of_graphs,3)
+    ratioNL=routine_obtain_bipartite_subgraphs(instances_of_graphs,4)
+    ratioEstrada=routine_obtain_bipartite_subgraphs(instances_of_graphs,5)
+    ratioAnew=routine_obtain_bipartite_subgraphs(instances_of_graphs,6)
+    ratioNLnew=routine_obtain_bipartite_subgraphs(instances_of_graphs,7) 
+      
+    return ratio_erdos,ratioA,ratioQ,ratioL, ratioNL, ratioEstrada, ratioAnew, ratioNLnew    
+
+def save_results(erdos, rA, rQ, rL, rNL, res, rAnew, rNLnew,graph_name, outfolder):
+    
+    path = './'+outfolder+'/'+graph_name;
+    
+    try: 
+        os.makedirs(path)
+    except OSError:
+        if not os.path.isdir(path):
+            raise
+    
+    
+    np.savetxt(path+'/ratioErdos.txt',erdos, fmt='%.3f');
+    np.savetxt(path+'/ratioA.txt',rA, fmt='%.3f');
+    np.savetxt(path+'/ratioQ.txt',rQ, fmt='%.3f');
+    np.savetxt(path+'/ratioL.txt',rL, fmt='%.3f');
+    np.savetxt(path+'/ratioNL.txt',rNL, fmt='%.3f');
+    np.savetxt(path+'/ratioEstrada.txt',res, fmt='%.3f');
+    np.savetxt(path+'/ratioAnew.txt',rAnew, fmt='%.3f');
+    np.savetxt(path+'/ratioNLnew.txt',rNLnew, fmt='%.3f');
+
+
+
+
+
 
 def histogram_plot(ratio_list,fcolor, alph,lgd):
     
@@ -503,66 +563,88 @@ def histogram_plot(ratio_list,fcolor, alph,lgd):
     plt.xlabel("ratio")
    
     
-number_of_graphs=1200;    
-
-a=np.matrix(np.random.uniform(0.2,1,(1,1,number_of_graphs)))   #ER model param
-
-#m = np.matrix(np.random.randint(1,10,(1,1,number_of_graphs)))  #BA model param
-
-#r = np.matrix(np.random.uniform(0.5,1,(1,1,number_of_graphs))) #RG model threshold
-
-#prew = np.matrix(np.random.uniform(0,0.3,(1,1,number_of_graphs))) # WS -model rewiring probability
-
-ratio_list=[];
-start_time = time.clock()
-instances_of_graphs=[];
-name_of_graph_model='WSmodel/4' 
-   
-for pr in range(number_of_graphs):
+def main():
+        parser = argparse.ArgumentParser()
         
-        instances_of_graphs.append(generate_er(20,a[0,pr]));     #ER Graphmodel
         
-        #instances_of_graphs.append(generate_ba(20,m[0,pr]));     #BA Graphmodel
+        parser.add_argument('--g', '--graph', nargs='?', type=str,
+                            default='ER', help='graph models: ER, BA, RG, WS')
         
-        #instances_of_graphs.append(generate_rg(20,r[0,pr]));     #RG Graphmodel
+        parser.add_argument('--p_er', '--param_er', nargs=2, type=float,
+                            default=[0.0, 1.0], help='parameter for ER graph model: min max')
+          
+        parser.add_argument('--p_ba', '--param_ba', nargs=2, type=int,                           
+                            default=[1, 10], help='parameter for BA graph model: min max')
         
-        #instances_of_graphs.append(generate_ws(20,4,prew[0,pr])); #WS Graphmodel
+        parser.add_argument('--p_rg', '--param_rg',nargs=2, type=float,                            
+                            default=[0.5, 1.0], help='parameter for RG graph model: min max') 
+       
+        parser.add_argument('--p_ws', '--param_ws',nargs=3, type=float,                           
+                            default=[8, 0.0, 0.3], help='parameters k (nearest neighbors)  &  r (probability of rewiring)for WS graph model') 
         
-################### Erdös method ###################
-print("\nEntering Erdos method")
-ratio_erdos=routine_obtain_bipartite_subgraphs(instances_of_graphs,0)
-#print(ratio_erdos)
-np.savetxt('./'+name_of_graph_model+'/ratioErdos.txt',ratio_erdos, fmt='%.3f');  
-'''
-print("\nEntering Eigenvector based methods")
-################### Adjacency matrix + Erdös method ###################
-ratioA=routine_obtain_bipartite_subgraphs(instances_of_graphs,1)
-np.savetxt('./'+name_of_graph_model+'/ratioA.txt',ratioA, fmt='%.3f'); 
+        parser.add_argument('--n', '--nodes',nargs=1, type=int,                           
+                            default=20, help='number of nodes') 
+        
+        parser.add_argument('--ng', '--nog',nargs=1, type=int,                           
+                            default=1, help='number of graphs') 
+        
+        parser.add_argument('--o', '--output',nargs=1, type=str,                           
+                            default='output_folder', help='name of the output folder') 
+         
+        
+        
+        args = parser.parse_args()
+        
+        # Extract input parameters
+        graph_name = args.g; 
+        
+        param_er   = args.p_er; 
+        param_ba   = args.p_ba; 
+        param_rg   = args.p_rg;
+        param_ws   = args.p_ws;
+        param_n    = args.n;
+        param_ng   = args.ng;
+        outfolder  = args.o;
+        
+        return graph_name, param_er, param_ba, param_rg, param_ws, param_n, param_ng, outfolder
 
-################### Signless Laplacian matrix + Erdös method ###################
-ratioQ=routine_obtain_bipartite_subgraphs(instances_of_graphs,2)
-np.savetxt('./'+name_of_graph_model+'/ratioQ.txt',ratioQ, fmt='%.3f'); 
 
-################### Laplacian matrix + Erdös method ###################
-ratioL=routine_obtain_bipartite_subgraphs(instances_of_graphs,3)
-np.savetxt('./'+name_of_graph_model+'/ratioL.txt',ratioL, fmt='%.3f'); 
 
-################### normalized Laplacian matrix + Erdös method ###################
-ratioNL=routine_obtain_bipartite_subgraphs(instances_of_graphs,4)
-np.savetxt('./'+name_of_graph_model+'/ratioNL.txt',ratioNL, fmt='%.3f'); 
+if __name__ == "__main__":
+    if len(sys.argv[0:])==1:
+        print ("printing the default values:\n", main())
+        print ("filename -h for more information\n")
+    else:    
+        graph_name, param_er, param_ba, param_rg, param_ws, num_nodes,number_of_graphs, outfolder=main()
+        instances_of_graphs=[];
+        num_graphs  =  number_of_graphs[0];
+        n_nodes     = int(num_nodes[0]);
+        if str(graph_name)=='ER':
+           
+           param_sample=np.matrix(np.random.uniform(param_er[0],param_er[1],(1,1,int(num_graphs)))) 
+           for sample in range(int(num_graphs)):
+               instances_of_graphs.append(generate_er(n_nodes,param_sample[0,sample]));   
+        
+        elif str(graph_name)=='BA':
+             param_sample=np.matrix(np.random.uniform(param_ba[0],param_ba[1],(1,1,int(num_graphs)))) 
+           
+             for sample in range(int(num_graphs)):
+                 instances_of_graphs.append(generate_ba(n_nodes,param_sample[0,sample]));
 
-print("\nEntering Estrada edge bipartivity")
-################### Estrada edge bipartivity ###################
-ratioEstrada=routine_obtain_bipartite_subgraphs(instances_of_graphs,5)
-np.savetxt('./'+name_of_graph_model+'/ratioEstrada.txt',ratioEstrada, fmt='%.3f'); 
+        elif str(graph_name)=='RG':
+             param_sample=np.matrix(np.random.uniform(param_rg[0],param_rg[1],(1,1,int(num_graphs)))) 
+           
+             for sample in range(int(num_graphs)):
+                 instances_of_graphs.append(generate_rg(n_nodes,param_sample[0,sample]));
+ 
+        else:
+            
+             param_sample=np.matrix(np.random.uniform(param_ws[1],param_ws[2],(1,1,int(num_graphs)))) 
+           
+             for sample in range(int(num_graphs)):
+                 instances_of_graphs.append(generate_ba(n_nodes, param_ws[0],param_sample[0,sample]));
 
-print("\nEntering New measures")
-################### New measure based on the Adjacency matrix ###################
-ratioAnew=routine_obtain_bipartite_subgraphs(instances_of_graphs,6)
-np.savetxt('./'+name_of_graph_model+'/ratioAnew.txt',ratioAnew, fmt='%.3f'); 
 
-################### New measure based on the Normalized Laplacian matrix ###################
-ratioNLnew=routine_obtain_bipartite_subgraphs(instances_of_graphs,7) 
-np.savetxt('./'+name_of_graph_model+'/ratioNLnew.txt',ratioNLnew, fmt='%.3f'); 
-''' 
-print (time.clock() - start_time, "seconds")
+
+        erdos, rA, rQ, rL, rNL, res, rAnew, rNLnew=call_methods(instances_of_graphs);  
+        save_results(erdos, rA, rQ, rL, rNL, res, rAnew, rNLnew, graph_name, outfolder[0]);
