@@ -36,7 +36,7 @@ not contain a cycle of odd length as a subgraph.
 ## How to run?
 * Input: 
   ```shell 
-  python bipartite_subgraph_identification.py --h 
+  python bipartite_subgraph_identification.py -h 
   ```
 * Output: 
 ```shell
