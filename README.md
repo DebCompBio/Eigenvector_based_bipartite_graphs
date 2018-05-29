@@ -29,7 +29,7 @@ not contain a cycle of odd length as a subgraph.
 
 [3] Estrada, E. and Gómez-Gardeñes, J., Physica D: Nonlinear Phenomena, 2016;323, pp.57-63, 
 
-[4] Paul, D. and Stevanovic, D., (2018) (in preparation)
+[4] Paul, D. and Stevanovic, D., (2018) (submitted)
 
  
 
